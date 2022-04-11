@@ -11,7 +11,7 @@ setuptools.setup(
     description="Generate SQL scripts to simulate streaming features offline",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/AfterpayTouch/data-datalake-pipeline-feature-science-ddf/tree/main/team_scripts/hao0liu/tools/streaming_feature_simulator",
+    url="https://github.com/hao0L/Streaming_Feature_Simulator",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
