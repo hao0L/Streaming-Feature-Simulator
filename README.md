@@ -30,6 +30,11 @@ python setup.py install --user
 ```
 from streaming_feature_simulator.sql_generator import sql_generator
 ```
+7. Update config rile and run sql_generator
+```
+file_path="/Users/haoliu/github/Streaming_Feature_Simulator/streaming_feature_simulator/config/example_sliding_window_order_attempt.json"
+print(sql_generator(file_path))
+```
 
 
 
