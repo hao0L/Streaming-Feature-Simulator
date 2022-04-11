@@ -1,0 +1,93 @@
+{
+	"//prompt1//": "choose feature_audit or feature_simulation:",
+	"audit_or_simulation": "feature_audit" ,
+
+	"//prompt2.1//": "please create or confirm the source template for checkpoint call you'd like to simulate feature for (use decision record table by default):",
+	"checkpoint_table" : "checkpoint_decision_record.sql",
+
+	"//prompt2.2//": "please create or confirm the source template to pull the raw events for simulating features:",
+	"event_table" : "event_order_session.sql",
+
+	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
+	"region": "AU",
+	"checkpoint": "CHECKOUT_CONFIRM",
+	"start_date": "2022-04-01",
+	"end_date": "2022-04-03",
+
+	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
+	"entity_id_from_request": "key_device_fingerprint_hash",
+	"consumer_uuid_column": "key_consumer_id",
+
+
+	"//prompt3.3//": "please input columns to extract information from event table:",
+	"entity_id_column": "device_fingerprint_hash",
+	"event_time_key": "key_event_info_event_time",
+
+
+	"//prompt4.1//": "please choose the method for feature value aggregation: sliding_window or latest:",
+	"feature_type": "sliding_window",
+
+	"//prompt4.2//": "please input the time windows for feature value aggregation: only m,h,d is now supported",
+	"windows": [
+		"h1",
+		"h2",
+		"h6",
+		"h12",
+		"d1",
+		"d3"
+	],
+
+	"//prompt5//": "please put in all columns that will be aggregated based on key selected above: (count, count_distinct, sum, min, max)",
+	"feature_columns": [
+		{
+			"column": "consumer_consumer_uuid",
+			"column_alias": "",
+			"data_type": "varchar",
+			"aggfunc": "count_distinct",
+			"filter": "",
+			"prefix": "sp_d_linking_hop0_consumer_distinct_cnt_by_device_fingerprint"
+		},
+		{
+			"column": "key_token",
+			"column_alias": "",
+			"data_type": "varchar",
+			"aggfunc": "count",
+			"filter": "",
+			"prefix": "sp_d_linking_hop0_order_attmpt_cnt_by_device_fingerprint"
+		},
+		{
+			"column": "key_token",
+			"column_alias": "",
+			"data_type": "varchar",
+			"aggfunc": "count",
+			"filter": "status='APPROVED'",
+			"prefix": "sp_d_linking_hop0_success_order_cnt_by_device_fingerprint"
+		},
+		{
+			"column": "consumer_total_amount_amount",
+			"column_alias": "",
+			"data_type": "decimal(18,2)",
+			"aggfunc": "sum",
+			"filter": "",
+			"prefix": "sp_d_linking_hop0_order_attmpt_amt_by_device_fingerprint"
+		},
+		{
+			"column": "consumer_total_amount_amount",
+			"column_alias": "",
+			"data_type": "decimal(18,2)",
+			"aggfunc": "sum",
+			"filter": "status='APPROVED'",
+			"prefix": "sp_d_linking_hop0_success_order_amt_by_device_fingerprint"
+		}
+	],
+
+	"//prompt6//": "please put in columns are used as filters:",
+	"filter_columns": [
+		{
+			"column": "status"
+		}
+	],
+
+	"//prompt7//": "please put in table postfix you'd like to use :",
+	"table_postfix": "hao"
+}

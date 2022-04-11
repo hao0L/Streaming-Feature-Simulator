@@ -1,0 +1,6 @@
+README.md
+setup.py
+streaming_feature_simulator.egg-info/PKG-INFO
+streaming_feature_simulator.egg-info/SOURCES.txt
+streaming_feature_simulator.egg-info/dependency_links.txt
+streaming_feature_simulator.egg-info/top_level.txt

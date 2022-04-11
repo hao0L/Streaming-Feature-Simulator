@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: streaming-feature-simulator
+Version: 0.0.1
+Summary: Generate SQL scripts to simulate streaming features offline
+Home-page: https://github.com/AfterpayTouch/data-datalake-pipeline-feature-science-ddf/tree/main/team_scripts/hao0liu/tools/streaming_feature_simulator
+Author: Hao Liu
+Author-email: haoliu@squareup.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+
+streaming feature simulator
+
