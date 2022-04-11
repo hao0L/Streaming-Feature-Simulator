@@ -2,7 +2,7 @@ Metadata-Version: 2.1
 Name: streaming-feature-simulator
 Version: 0.0.1
 Summary: Generate SQL scripts to simulate streaming features offline
-Home-page: https://github.com/AfterpayTouch/data-datalake-pipeline-feature-science-ddf/tree/main/team_scripts/hao0liu/tools/streaming_feature_simulator
+Home-page: https://github.com/hao0L/Streaming_Feature_Simulator
 Author: Hao Liu
 Author-email: haoliu@squareup.com
 License: UNKNOWN
@@ -13,5 +13,36 @@ Classifier: Operating System :: OS Independent
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 
-streaming feature simulator
+#Streaming feature simulator
+
+Streaming feature simulator is pretty self-explanatory, simulate the streaming features based on offline data. It provides the following features:
+
+- Generate Feature Simulation SQL script
+- Generate Feature Auditing SQL script
+
+## Installation
+1. Clone the repository from remote
+``` 
+git clone https://github.com/hao0L/Streaming_Feature_Simulator.git
+   ```
+2. Change the working directory to Streaming Feature Simulator
+```
+cd Streaming_Feature_Simulator
+```
+3. Install dependencies required by Streaming Feature Simulator
+```
+pip install -r requirements.txt
+```
+4. Install package streaming_feature_simulator
+```
+python setup.py install --user
+```
+5. Testing
+```
+from streaming_feature_simulator.sql_generator import sql_generator
+```
+
+
+
+
 
