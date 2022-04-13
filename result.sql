@@ -12,9 +12,9 @@ WITH tmp_source AS (
          , request
          , rules_variables AS feature_map
     FROM red.raw_c_e_fc_decision_record
-    WHERE par_region = 'GB'
-      AND par_process_date BETWEEN '2022-04-08' AND '2022-04-10'
-      AND key_checkpoint = 'CPE_CHECKOUT_CONFIRM'
+    WHERE par_region = 'US'
+      AND par_process_date BETWEEN '2022-04-09' AND '2022-04-11'
+      AND key_checkpoint = 'CHECKOUT_CONFIRM'
 )
     SELECT
            par_process_date
@@ -47,13 +47,13 @@ CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_event_order_attempt 
          key_event_info_event_time event_time  --## event_time ##
          , consumer_consumer_uuid AS consumer_uuid --## consumer_uuid ##
          , consumer_uuid AS entity_id    --## entity_id ##
-         , payment_card_name
          , order_transaction_id
+         , payment_card_name
          , status_reason
          --- always use event table as the main table
     FROM green.raw_c_e_order
-    WHERE par_region = 'GB'
-      AND par_process_date BETWEEN '2022-04-01' AND '2022-04-10'
+    WHERE par_region = 'US'
+      AND par_process_date BETWEEN '2022-04-02' AND '2022-04-11'
       ORDER BY entity_id
 );
 
@@ -63,10 +63,10 @@ CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_simulated_order_atte
 
     SELECT t2.entity_id
         , t2.checkpoint_time
-        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) THEN payment_card_name::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_h12_0
-        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 24*60*60*1000) THEN payment_card_name::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_h24_0
-        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) THEN payment_card_name::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_d3_0
-        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) THEN payment_card_name::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_d7_0
+        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (LEN(payment_card_name)>0) THEN payment_card_name ::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_h12_0
+        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 24*60*60*1000) AND (LEN(payment_card_name)>0) THEN payment_card_name ::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_h24_0
+        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (LEN(payment_card_name)>0) THEN payment_card_name ::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_d3_0
+        , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (LEN(payment_card_name)>0) THEN payment_card_name ::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_d7_0
         , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0
         , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0
         , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0

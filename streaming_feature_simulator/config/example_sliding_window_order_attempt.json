@@ -9,10 +9,10 @@
 	"event_table" : "event_order_green.sql",
 
 	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
-	"region": "GB",
-	"checkpoint": "CPE_CHECKOUT_CONFIRM",
-	"start_date": "2022-04-08",
-	"end_date": "2022-04-10",
+	"region": "US",
+	"checkpoint": "CHECKOUT_CONFIRM",
+	"start_date": "2022-04-09",
+	"end_date": "2022-04-11",
 
 	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
 	"entity_id_from_request": "key_consumer_id",
@@ -42,7 +42,7 @@
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count_distinct",
-			"filter": "",
+			"filter": "LEN(payment_card_name)>0",
 			"prefix": "sp_c_attmpt_cc_name_cnt"
 		},
 		{
