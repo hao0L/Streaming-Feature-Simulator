@@ -7,7 +7,10 @@ WITH tmp_source AS (
          , key_device_fingerprint_hash
          , consumer_email
          , request
-         , rules_variables AS feature_map
+         , (CASE
+                    WHEN NOT is_valid_json(rules_variables)
+                        THEN rtrim(regexp_substr(rules_variables, '^.*[,]'),',') || '}'
+                    ELSE rules_variables END) AS feature_map
     FROM red.raw_c_e_fc_decision_record
     WHERE par_region = '{{REGION}}'
       AND par_process_date BETWEEN '{{START_DATE}}' AND '{{END_DATE}}'

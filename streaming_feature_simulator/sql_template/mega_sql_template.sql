@@ -57,7 +57,7 @@ order by 1
 SELECT
     t1.par_process_date
 {% for feature in FEATURES -%}
-    , COUNT(CASE WHEN NULLIF(t1.{{feature}},'') > 0 THEN 1 END) cnt_{{feature}}
+    , COUNT(CASE WHEN NULLIF(t1.{{feature}},'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_{{feature}}
     , 1.0 * SUM(CASE WHEN NULLIF(t1.{{feature}},'') > 0 AND
                     ABS(NULLIF(t1.{{feature}},'')::DECIMAL(18,2) - t2.{{feature}}::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE

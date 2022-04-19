@@ -10,11 +10,14 @@ WITH tmp_source AS (
          , key_device_fingerprint_hash
          , consumer_email
          , request
-         , rules_variables AS feature_map
+         , (CASE
+                    WHEN NOT is_valid_json(rules_variables)
+                        THEN rtrim(regexp_substr(rules_variables, '^.*[,]'),',') || '}'
+                    ELSE rules_variables END) AS feature_map
     FROM red.raw_c_e_fc_decision_record
-    WHERE par_region = 'US'
-      AND par_process_date BETWEEN '2022-04-09' AND '2022-04-11'
-      AND key_checkpoint = 'CHECKOUT_CONFIRM'
+    WHERE par_region = 'GB'
+      AND par_process_date BETWEEN '2022-04-16' AND '2022-04-18'
+      AND key_checkpoint = 'CPE_CHECKOUT_CONFIRM'
 )
     SELECT
            par_process_date
@@ -26,10 +29,10 @@ WITH tmp_source AS (
            , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_attmpt_cc_name_cnt_h24_0', TRUE) AS sp_c_attmpt_cc_name_cnt_h24_0
            , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_attmpt_cc_name_cnt_d3_0', TRUE) AS sp_c_attmpt_cc_name_cnt_d3_0
            , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_attmpt_cc_name_cnt_d7_0', TRUE) AS sp_c_attmpt_cc_name_cnt_d7_0
-           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0
-           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0
-           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0
-           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0
+           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0
+           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0
+           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0
+           , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0', TRUE) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0
            , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0', TRUE) AS sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0
            , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0', TRUE) AS sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0
            , JSON_EXTRACT_PATH_TEXT(feature_map, 'sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0', TRUE) AS sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0
@@ -51,9 +54,9 @@ CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_event_order_attempt 
          , payment_card_name
          , status_reason
          --- always use event table as the main table
-    FROM green.raw_c_e_order
-    WHERE par_region = 'US'
-      AND par_process_date BETWEEN '2022-04-02' AND '2022-04-11'
+    FROM red.raw_c_e_order
+    WHERE par_region = 'GB'
+      AND par_process_date BETWEEN '2022-04-09' AND '2022-04-18'
       ORDER BY entity_id
 );
 
@@ -67,10 +70,10 @@ CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_simulated_order_atte
         , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 24*60*60*1000) AND (LEN(payment_card_name)>0) THEN payment_card_name ::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_h24_0
         , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (LEN(payment_card_name)>0) THEN payment_card_name ::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_d3_0
         , COALESCE( COUNT(DISTINCT  CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (LEN(payment_card_name)>0) THEN payment_card_name ::VARCHAR END), 0) AS sp_c_attmpt_cc_name_cnt_d7_0
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (status_reason = 'INVALID_PAYMENT_DETAILS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0
         , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (status_reason = 'INSUFFICIENT_FUNDS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0
         , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 24*60*60*1000) AND (status_reason = 'INSUFFICIENT_FUNDS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0
         , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (status_reason = 'INSUFFICIENT_FUNDS') THEN order_transaction_id ::VARCHAR END), 0) AS sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0
@@ -103,22 +106,22 @@ SELECT
        NULLIF(COUNT(1),0) AS pct_missing_sp_c_attmpt_cc_name_cnt_d7_0
        , 1.0 * COUNT(CASE WHEN sp_c_attmpt_cc_name_cnt_d7_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
        NULLIF(COUNT(1),0) AS pct_default_sp_c_attmpt_cc_name_cnt_d7_0
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0 = '' THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0
+       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0 = '' THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0
+       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0 = '' THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0
+       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0 = '' THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0
+       , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0
            , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0 = '' THEN 1 END) /
        NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0
        , 1.0 * COUNT(CASE WHEN sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
@@ -143,73 +146,73 @@ order by 1
 ----- match rate between feature value and simulated value -----
 SELECT
     t1.par_process_date
-, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h12_0,'') > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_h12_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h12_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_h12_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h12_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_attmpt_cc_name_cnt_h12_0,'')::DECIMAL(18,2) - t2.sp_c_attmpt_cc_name_cnt_h12_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
                         WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h12_0,'') > 0
                             THEN 1 ELSE 0 END), 0) pct_match_sp_c_attmpt_cc_name_cnt_h12_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h24_0,'') > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_h24_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h24_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_h24_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h24_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_attmpt_cc_name_cnt_h24_0,'')::DECIMAL(18,2) - t2.sp_c_attmpt_cc_name_cnt_h24_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
                         WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_h24_0,'') > 0
                             THEN 1 ELSE 0 END), 0) pct_match_sp_c_attmpt_cc_name_cnt_h24_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d3_0,'') > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_d3_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d3_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_d3_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d3_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_attmpt_cc_name_cnt_d3_0,'')::DECIMAL(18,2) - t2.sp_c_attmpt_cc_name_cnt_d3_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
                         WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d3_0,'') > 0
                             THEN 1 ELSE 0 END), 0) pct_match_sp_c_attmpt_cc_name_cnt_d3_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d7_0,'') > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_d7_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d7_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_attmpt_cc_name_cnt_d7_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d7_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_attmpt_cc_name_cnt_d7_0,'')::DECIMAL(18,2) - t2.sp_c_attmpt_cc_name_cnt_d7_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
                         WHEN NULLIF(t1.sp_c_attmpt_cc_name_cnt_d7_0,'') > 0
                             THEN 1 ELSE 0 END), 0) pct_match_sp_c_attmpt_cc_name_cnt_d7_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0::DECIMAL(18,2)) < 1
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0,'') > 0 AND
+                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_h12_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0::DECIMAL(18,2)) < 1
+                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0,'') > 0
+                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h12_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0,'') > 0 AND
+                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_h24_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0::DECIMAL(18,2)) < 1
+                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0,'') > 0
+                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_h24_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0,'') > 0 AND
+                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_d3_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0::DECIMAL(18,2)) < 1
+                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0,'') > 0
+                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d3_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0,'') > 0 AND
+                    ABS(NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_d7_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0
+                        WHEN NULLIF(t1.sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0,'') > 0
+                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt_d7_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
                         WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0,'') > 0
                             THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h12_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
                         WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0,'') > 0
                             THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_h24_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
                         WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0,'') > 0
                             THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d3_0
-, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d7_0,'') > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d7_0
+, COUNT(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d7_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d7_0
     , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d7_0,'') > 0 AND
                     ABS(NULLIF(t1.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d7_0,'')::DECIMAL(18,2) - t2.sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt_d7_0::DECIMAL(18,2)) < 1
                               THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
