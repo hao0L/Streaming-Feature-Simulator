@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: streaming-feature-simulator
-Version: 0.0.1
+Version: 0.0.2
 Summary: Generate SQL scripts to simulate streaming features offline
 Home-page: https://github.com/hao0L/Streaming_Feature_Simulator
 Author: Hao Liu

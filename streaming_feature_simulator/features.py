@@ -88,6 +88,7 @@ class BaseFeatureGroup:
         self.checkpoint_table = feature_config['checkpoint_table']
 
         self.table_postfix = feature_config['table_postfix']
+        self.feature_name_template = feature_config['feature_name_template']
 
     def to_sql(self):
         NotImplemented
@@ -130,7 +131,7 @@ class SlidingWindowFeatureGroup(BaseFeatureGroup):
             filter_expression = feature_def['filter']
 
             for window in self.windows:
-                feature_name_template = f"{feature_prefix}_{window}_0"
+                # feature_name_template = f"{feature_prefix}_{window}_0"
 
                 feature_sql_expr = SlidingWindowFeature(
                     value=value_column_name,
@@ -138,7 +139,7 @@ class SlidingWindowFeatureGroup(BaseFeatureGroup):
                     window=window,
                     aggfunc=aggfunc,
                     filter=filter_expression,
-                    feature_name=feature_name_template.format(feature_prefix, window)
+                    feature_name=self.feature_name_template.format(feature_prefix, window)
                 ).to_sql_expression()
                 feature_sql_expressions.append(feature_sql_expr)
                 feature_names.append(feature_name_template.format(feature_prefix, window))

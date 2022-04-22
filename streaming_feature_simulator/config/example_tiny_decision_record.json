@@ -58,8 +58,5 @@
 	],
 
 	"//prompt7//": "please put in table postfix you'd like to use for auditing/simulation:",
-	"table_postfix": "hao",
-
-	"//prompt8//": "please put in streaming feature name template:",
-	"feature_name_template": "{feature_prefix}_{window}_0"
+	"table_postfix": "hao"
 }

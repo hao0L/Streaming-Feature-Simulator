@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="streaming_feature_simulator",
-    version="0.0.1",
+    version="0.0.2",
     author="Hao Liu",
     author_email="haoliu@squareup.com",
     description="Generate SQL scripts to simulate streaming features offline",
