@@ -53,5 +53,8 @@
 		{
 			"column": ""
 		}
-	]
+	],
+
+	"//prompt8//": "please put in streaming feature name template:",
+	"feature_name_template": "${feature_prefix}_${window}_0"
 }
