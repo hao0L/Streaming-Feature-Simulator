@@ -6,13 +6,13 @@
 	"checkpoint_table" : "checkpoint_decision_record.sql",
 
 	"//prompt2.2//": "please create or confirm the source template to pull the raw events for simulating features:",
-	"event_table" : "event_order_green.sql",
+	"event_table" : "event_order_red.sql",
 
 	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
 	"region": "GB",
 	"checkpoint": "CPE_CHECKOUT_CONFIRM",
-	"start_date": "2022-04-08",
-	"end_date": "2022-04-10",
+	"start_date": "2022-04-16",
+	"end_date": "2022-04-18",
 
 	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
 	"entity_id_from_request": "key_consumer_id",
@@ -42,7 +42,7 @@
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count_distinct",
-			"filter": "",
+			"filter": "LEN(payment_card_name)>0",
 			"prefix": "sp_c_attmpt_cc_name_cnt"
 		},
 		{
@@ -51,7 +51,7 @@
 			"data_type": "varchar",
 			"aggfunc": "count",
 			"filter": "status_reason = 'INVALID_PAYMENT_DETAILS'",
-			"prefix": "sp_c_online_decl_topaz_invalid_pymnt_ordr"
+			"prefix": "sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt"
 		},
 		{
 			"column": "order_transaction_id",
@@ -71,5 +71,8 @@
 	],
 
 	"//prompt7//": "please put in table postfix you'd like to use for auditing/simulation:",
-	"table_postfix": "order_attempt"
+	"table_postfix": "order_attempt",
+
+	"//prompt8//": "please put in streaming feature name template:",
+	"feature_name_template": "${feature_prefix}_${window}_0"
 }

@@ -4,7 +4,7 @@ import os
 
 
 # input absolute file path
-def sql_generator(json_file_path, save_sql=True, save_path="./result.sql"):
+def sql_generator(json_file_path, save_sql=True, save_path="./output/result.sql"):
     with open(json_file_path) as f:
         feature_config = json.load(f)
 
