@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS sandbox_analytics_us.tmp_feature_audit_feature_value_risk_a
 CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_value_risk_actions DISTKEY(entity_id) AS (
 WITH tmp_source AS (
     SELECT par_process_date
-         , key_created_at AS checkpoint_time
+         , key_created_at::BIGINT AS checkpoint_time
          , key_consumer_id
          , key_order_token
          , key_merchant_id_main
@@ -16,7 +16,7 @@ WITH tmp_source AS (
                     ELSE rules_variables END) AS feature_map
     FROM red.raw_c_e_fc_decision_record
     WHERE par_region = 'AU'
-      AND par_process_date BETWEEN '2022-04-21' AND '2022-04-24'
+      AND par_process_date BETWEEN '2022-04-25' AND '2022-04-27'
       AND key_checkpoint = 'CHECKOUT_CONFIRM'
 )
     SELECT
@@ -98,16 +98,16 @@ WITH tmp_source AS (
 DROP TABLE IF EXISTS sandbox_analytics_us.tmp_feature_audit_feature_event_risk_actions;
 CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_event_risk_actions DISTKEY(entity_id) AS (
 SELECT
-         date_part(epoch, event_info_event_time) * 1000 AS event_time  --## event_time ##
+         date_part(epoch, event_info_event_time) * 1000 ::BIGINT AS event_time  --## event_time ##
          , key_consumer_uuid AS consumer_uuid --## consumer_uuid ##
          , consumer_uuid AS entity_id    --## entity_id ##
-         , consumer_uuid
+         , key_consumer_uuid
          , checkpoint
          , actions
          --- always use event table as the main table
     FROM green.raw_c_e_udp_tiny_decision_record
     WHERE par_region = 'AU'
-      AND par_process_date BETWEEN '2022-04-14' AND '2022-04-24'
+      AND par_process_date BETWEEN '2022-04-18' AND '2022-04-27'
     ORDER BY entity_id
 );
 
@@ -117,69 +117,69 @@ CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_simulated_risk_actio
 
     SELECT t2.entity_id
         , t2.checkpoint_time
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%decline%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%card_scan_required%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%frozen%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d7
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_h1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_h6
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_h12
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d1
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d2
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d3
-        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATON','BARCODE_REDENPTION') AND lower(actions) like '%suspended%' ) THEN consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('LOGIN') AND lower(actions) like '%login_2fa_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_login_2fa_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_decline_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%decline%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_decline_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_card_scan_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%card_scan_required%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_card_scan_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_freeze_cn_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%frozen%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_freeze_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('CHECKOUT_CONFIRM') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_online_suspend_cnt_d7
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_h1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 6*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_h6
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 12*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_h12
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 1*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d1
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 2*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d2
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 3*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d3
+        , COALESCE( COUNT( CASE WHEN (t2.checkpoint_time - t1.event_time BETWEEN 0 AND 7*24*60*60*1000) AND (checkpoint in ('BARCODE_GENERATION','BARCODE_REDEMPTION') AND lower(actions) like '%suspended%' ) THEN key_consumer_uuid ::VARCHAR END), 0) AS sp_c_instore_suspend_cnt_d7
         FROM sandbox_analytics_us.tmp_feature_audit_feature_event_risk_actions t1
     RIGHT JOIN sandbox_analytics_us.tmp_feature_audit_feature_value_risk_actions t2
         ON t1.entity_id = t2.entity_id
@@ -192,258 +192,132 @@ CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_simulated_risk_actio
 SELECT
        par_process_date
        , COUNT(1) AS records_cnt
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_login_2fa_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_login_2fa_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_login_2fa_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_login_2fa_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_login_2fa_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_login_2fa_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_login_2fa_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_login_2fa_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_login_2fa_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_login_2fa_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_login_2fa_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_login_2fa_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_login_2fa_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_login_2fa_cnt_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decline_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decline_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decline_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decline_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decline_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decline_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decline_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decline_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decline_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decline_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decline_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decline_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_decline_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_decline_cnt_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_decline_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_decline_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_decline_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_decline_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_decline_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_decline_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_decline_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_decline_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_decline_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_decline_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_decline_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_decline_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_decline_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_decline_cnt_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_card_scan_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_card_scan_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_card_scan_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_card_scan_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_card_scan_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_card_scan_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_card_scan_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_card_scan_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_card_scan_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_card_scan_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_card_scan_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_card_scan_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_card_scan_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_card_scan_cnt_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_card_scan_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_card_scan_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_card_scan_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_card_scan_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_card_scan_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_card_scan_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_card_scan_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_card_scan_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_card_scan_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_card_scan_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_card_scan_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_card_scan_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_card_scan_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_card_scan_cnt_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_freeze_cn_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_freeze_cn_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_freeze_cn_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_freeze_cn_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_freeze_cn_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_freeze_cn_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_freeze_cn_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_freeze_cn_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_freeze_cn_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_freeze_cn_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_freeze_cn_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_freeze_cn_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_freeze_cn_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_freeze_cn_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_freeze_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_freeze_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_freeze_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_freeze_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_freeze_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_freeze_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_freeze_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_freeze_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_freeze_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_freeze_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_freeze_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_freeze_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_freeze_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_freeze_cnt_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_suspend_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_suspend_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_suspend_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_suspend_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_suspend_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_suspend_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_suspend_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_suspend_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_suspend_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_suspend_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_suspend_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_suspend_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_online_suspend_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_online_suspend_cnt_d7
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_suspend_cnt_h1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_suspend_cnt_h1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h6 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_suspend_cnt_h6
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h6 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_suspend_cnt_h6
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h12 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_suspend_cnt_h12
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h12 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_suspend_cnt_h12
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d1 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_suspend_cnt_d1
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d1 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_suspend_cnt_d1
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d2 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_suspend_cnt_d2
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d2 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_suspend_cnt_d2
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d3 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_suspend_cnt_d3
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d3 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_suspend_cnt_d3
-           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d7 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_instore_suspend_cnt_d7
-       , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d7 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_instore_suspend_cnt_d7
+       , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_login_2fa_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_login_2fa_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_login_2fa_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_login_2fa_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_login_2fa_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_login_2fa_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_login_2fa_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_login_2fa_cnt_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_decline_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_decline_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_decline_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_decline_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_decline_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_decline_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_online_decline_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_decline_cnt_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_decline_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_decline_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_decline_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_decline_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_decline_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_decline_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_decline_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_decline_cnt_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_card_scan_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_card_scan_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_card_scan_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_card_scan_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_card_scan_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_card_scan_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_online_card_scan_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_card_scan_cnt_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_card_scan_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_card_scan_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_card_scan_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_card_scan_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_card_scan_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_card_scan_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_card_scan_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_card_scan_cnt_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_freeze_cn_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_freeze_cn_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_freeze_cn_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_freeze_cn_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_freeze_cn_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_freeze_cn_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_online_freeze_cn_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_freeze_cn_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_freeze_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_freeze_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_freeze_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_freeze_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_freeze_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_freeze_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_freeze_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_freeze_cnt_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_suspend_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_suspend_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_suspend_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_suspend_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_suspend_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_suspend_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_online_suspend_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_online_suspend_cnt_d7
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_suspend_cnt_h1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h6 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_suspend_cnt_h6
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_h12 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_suspend_cnt_h12
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d1 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_suspend_cnt_d1
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d2 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_suspend_cnt_d2
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d3 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_suspend_cnt_d3
+           , 1.0 * COUNT(CASE WHEN sp_c_instore_suspend_cnt_d7 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_instore_suspend_cnt_d7
            FROM sandbox_analytics_us.tmp_feature_audit_feature_value_risk_actions
 group by 1
 order by 1

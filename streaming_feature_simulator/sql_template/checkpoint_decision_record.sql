@@ -1,6 +1,6 @@
 WITH tmp_source AS (
     SELECT par_process_date
-         , key_created_at AS checkpoint_time
+         , key_created_at::BIGINT AS checkpoint_time
          , key_consumer_id
          , key_order_token
          , key_merchant_id_main

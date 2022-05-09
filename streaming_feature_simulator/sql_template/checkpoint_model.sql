@@ -1,7 +1,7 @@
 WITH tmp_source AS (
         SELECT
             par_process_date
-            , key_event_info_event_time AS checkpoint_time,
+            , key_event_info_event_time::BIGINT AS checkpoint_time,
             , key_entity_id
             {% if FEATURE_AUDIT -%}
             , feature_values AS feature_map

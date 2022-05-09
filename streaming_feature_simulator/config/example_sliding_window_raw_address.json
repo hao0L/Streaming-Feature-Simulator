@@ -6,13 +6,13 @@
 	"checkpoint_table" : "checkpoint_decision_record.sql",
 
 	"//prompt2.2//": "please create or confirm the source template to pull the raw events for simulating features:",
-	"event_table" : "event_order.sql",
+	"event_table" : "event_order_red.sql",
 
 	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
-	"region": "AU",
+	"region": "US",
 	"checkpoint": "CHECKOUT_CONFIRM",
-	"start_date": "2022-04-01",
-	"end_date": "2022-04-03",
+	"start_date": "2022-05-03",
+	"end_date": "2022-05-05",
 
 	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
 	"entity_id_from_request": "MD5(LOWER(TRIM(JSON_EXTRACT_PATH_TEXT(request, 'order', 'shipping_address', 'address1', TRUE))||' '||TRIM(json_extract_path_text(request, 'order', 'shipping_address', 'address2', TRUE))||' '||TRIM(json_extract_path_text(request, 'order', 'shipping_address', 'suburb', TRUE))||' '||TRIM(json_extract_path_text(request, 'order', 'shipping_address', 'state', TRUE))||' '||TRIM(json_extract_path_text(request, 'order', 'shipping_address', 'postcode', TRUE))||' '||TRIM(json_extract_path_text(request, 'order', 'shipping_address', 'country_code', TRUE))))",
@@ -30,7 +30,7 @@
 	"//prompt4.2//": "please input the time windows for feature value aggregation: only m,h,d is now supported",
 	"windows": [
 		"h1",
-		"h2",
+		"h3",
 		"h6",
 		"h12",
 		"d1",
@@ -74,7 +74,7 @@
 	],
 
 	"//prompt7//": "please put in table postfix you'd like to use for auditing/simulation:",
-	"table_postfix": "hao",
+	"table_postfix": "raw_shipping_v2",
 
 	"//prompt8//": "please put in streaming feature name template:",
 	"feature_name_template": "${feature_prefix}_${window}_0"

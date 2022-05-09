@@ -1,5 +1,5 @@
 SELECT
-         date_part(epoch, event_info_event_time) * 1000 AS event_time  --## event_time ##
+         date_part(epoch, event_info_event_time) * 1000 ::BIGINT AS event_time  --## event_time ##
          , key_consumer_uuid AS consumer_uuid --## consumer_uuid ##
          , {{ENTITY_COLUMN_NAME}} AS entity_id    --## entity_id ##
          {% for column_name in OTHER_COLUMN_NAMES -%}
