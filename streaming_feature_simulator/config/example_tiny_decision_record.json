@@ -11,8 +11,8 @@
 	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
 	"region": "AU",
 	"checkpoint": "CHECKOUT_CONFIRM",
-	"start_date": "2022-04-21",
-	"end_date": "2022-04-24",
+	"start_date": "2022-04-25",
+	"end_date": "2022-04-27",
 
 	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
 	"entity_id_from_request": "key_consumer_id",
@@ -41,7 +41,7 @@
 	"//prompt5//": "please put in all columns that will be aggregated based on key selected above: (count, count_distinct, sum, min, max)",
 	"feature_columns": [
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -49,7 +49,7 @@
 			"prefix": "sp_c_login_2fa_cnt"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -57,7 +57,7 @@
 			"prefix": "sp_c_online_decline_cnt"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -65,7 +65,7 @@
 			"prefix": "sp_c_instore_decline_cnt"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -73,7 +73,7 @@
 			"prefix": "sp_c_online_card_scan_cnt"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -81,7 +81,7 @@
 			"prefix": "sp_c_instore_card_scan_cnt"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -89,7 +89,7 @@
 			"prefix": "sp_c_online_freeze_cn"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -97,7 +97,7 @@
 			"prefix": "sp_c_instore_freeze_cnt"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
@@ -105,7 +105,7 @@
 			"prefix": "sp_c_online_suspend_cnt"
 		},
 		{
-			"column": "consumer_uuid",
+			"column": "key_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",

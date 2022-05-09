@@ -43,10 +43,8 @@ SELECT
        par_process_date
        , COUNT(1) AS records_cnt
        {% for feature in FEATURES -%}
-       , 1.0 * COUNT(CASE WHEN {{feature}} = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_{{feature}}
-       , 1.0 * COUNT(CASE WHEN {{feature}} in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_{{feature}}
+       , 1.0 * COUNT(CASE WHEN {{feature}} NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_{{feature}}
            {% endfor -%}
 FROM sandbox_analytics_us.tmp_feature_audit_feature_value_{{TABLE_POSTFIX}}
 group by 1
@@ -58,11 +56,11 @@ SELECT
     t1.par_process_date
 {% for feature in FEATURES -%}
     , COUNT(CASE WHEN NULLIF(t1.{{feature}},'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_{{feature}}
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.{{feature}},'') > 0 AND
-                    ABS(NULLIF(t1.{{feature}},'')::DECIMAL(18,2) - t2.{{feature}}::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.{{feature}},'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_{{feature}}
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.{{feature}},'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.{{feature}},'')::DECIMAL(18,2) - t2.{{feature}}::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.{{feature}},'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_{{feature}}
 {% endfor -%}
 FROM sandbox_analytics_us.tmp_feature_audit_feature_value_{{TABLE_POSTFIX}} t1
          INNER JOIN sandbox_analytics_us.tmp_feature_audit_feature_simulated_{{TABLE_POSTFIX}} t2

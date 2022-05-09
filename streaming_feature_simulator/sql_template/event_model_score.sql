@@ -1,5 +1,5 @@
     SELECT
-         key_event_time AS event_time  --## event_time ##
+         key_event_time::BIGINT AS event_time  --## event_time ##
          , key_entity_id AS consumer_uuid --## consumer_uuid ##
          , {{ENTITY_COLUMN_NAME}} AS entity_id    --## entity_id ##
          {% for column_name in OTHER_COLUMN_NAMES -%}
