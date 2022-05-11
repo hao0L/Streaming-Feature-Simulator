@@ -327,383 +327,383 @@ order by 1
 SELECT
     t1.par_process_date
 , COUNT(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_login_2fa_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_login_2fa_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_login_2fa_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_login_2fa_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_login_2fa_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_login_2fa_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_login_2fa_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_login_2fa_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_login_2fa_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_login_2fa_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_login_2fa_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_login_2fa_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_login_2fa_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_login_2fa_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_login_2fa_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_login_2fa_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_login_2fa_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_login_2fa_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_login_2fa_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_login_2fa_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_login_2fa_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_login_2fa_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_login_2fa_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_login_2fa_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_login_2fa_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_login_2fa_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_login_2fa_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_login_2fa_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_login_2fa_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_login_2fa_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_login_2fa_cnt_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decline_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decline_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decline_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_decline_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decline_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decline_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decline_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_decline_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decline_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decline_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decline_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_decline_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decline_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decline_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decline_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_decline_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decline_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decline_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decline_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_decline_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decline_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decline_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decline_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_decline_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_decline_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_decline_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_decline_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_decline_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_online_decline_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_decline_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_decline_cnt_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_decline_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_decline_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_decline_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_decline_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_decline_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_decline_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_decline_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_decline_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_decline_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_decline_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_decline_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_decline_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_decline_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_decline_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_decline_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_decline_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_decline_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_decline_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_decline_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_decline_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_decline_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_decline_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_decline_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_decline_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_decline_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_decline_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_decline_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_decline_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_decline_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_decline_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_decline_cnt_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_card_scan_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_card_scan_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_card_scan_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_card_scan_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_card_scan_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_card_scan_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_card_scan_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_card_scan_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_card_scan_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_card_scan_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_card_scan_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_card_scan_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_card_scan_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_card_scan_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_online_card_scan_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_card_scan_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_card_scan_cnt_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_card_scan_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_card_scan_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_card_scan_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_card_scan_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_card_scan_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_card_scan_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_card_scan_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_card_scan_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_card_scan_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_card_scan_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_card_scan_cnt_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_freeze_cn_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_freeze_cn_h1,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_freeze_cn_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_freeze_cn_h1,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_freeze_cn_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_freeze_cn_h6,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_freeze_cn_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_freeze_cn_h6,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_freeze_cn_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_freeze_cn_h12,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_freeze_cn_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_freeze_cn_h12,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_freeze_cn_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_freeze_cn_d1,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_freeze_cn_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_freeze_cn_d1,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_freeze_cn_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_freeze_cn_d2,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_freeze_cn_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_freeze_cn_d2,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_freeze_cn_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_freeze_cn_d3,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_freeze_cn_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_freeze_cn_d3,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_freeze_cn_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_freeze_cn_d7,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_freeze_cn_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_freeze_cn_d7,'')::DECIMAL(18,2) - t2.sp_c_online_freeze_cn_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_freeze_cn_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_freeze_cn_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_freeze_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_freeze_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_freeze_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_freeze_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_freeze_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_freeze_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_freeze_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_freeze_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_freeze_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_freeze_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_freeze_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_freeze_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_freeze_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_freeze_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_freeze_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_freeze_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_freeze_cnt_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_suspend_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_suspend_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_suspend_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_suspend_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_suspend_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_suspend_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_suspend_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_suspend_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_suspend_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_suspend_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_suspend_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_suspend_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_suspend_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_suspend_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_suspend_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_suspend_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_suspend_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_suspend_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_suspend_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_suspend_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_suspend_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_suspend_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_suspend_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_suspend_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_online_suspend_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_online_suspend_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_online_suspend_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_online_suspend_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_online_suspend_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_online_suspend_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_online_suspend_cnt_d7
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_suspend_cnt_h1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_suspend_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_h1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_h1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_suspend_cnt_h1,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_h1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_h1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h6,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_suspend_cnt_h6
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h6,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_suspend_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_h6::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h6,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_h6
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h6,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_suspend_cnt_h6,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_h6::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h6,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_h6
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h12,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_suspend_cnt_h12
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h12,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_suspend_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_h12::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h12,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_h12
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h12,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_suspend_cnt_h12,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_h12::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_h12,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_h12
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d1,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_suspend_cnt_d1
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d1,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d1::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d1,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d1
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d1,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d1,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d1::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d1,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d1
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d2,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_suspend_cnt_d2
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d2,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d2::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d2,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d2
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d2,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d2,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d2::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d2,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d2
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d3,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_suspend_cnt_d3
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d3,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d3::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d3,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d3
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d3,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d3,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d3::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d3,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d3
 , COUNT(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d7,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_instore_suspend_cnt_d7
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d7,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d7::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d7,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d7
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d7,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_instore_suspend_cnt_d7,'')::DECIMAL(18,2) - t2.sp_c_instore_suspend_cnt_d7::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_instore_suspend_cnt_d7,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_instore_suspend_cnt_d7
 FROM sandbox_analytics_us.tmp_feature_audit_feature_value_risk_actions t1
          INNER JOIN sandbox_analytics_us.tmp_feature_audit_feature_simulated_risk_actions t2
                     ON t1.entity_id = t2.entity_id

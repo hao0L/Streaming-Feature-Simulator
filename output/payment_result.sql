@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS sandbox_analytics_us.tmp_feature_audit_feature_value_paymen
 CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_value_payment DISTKEY(entity_id) AS (
 WITH tmp_source AS (
     SELECT par_process_date
-         , key_created_at AS checkpoint_time
+         , key_created_at::BIGINT AS checkpoint_time
          , key_consumer_id
          , key_order_token
          , key_merchant_id_main
@@ -37,7 +37,7 @@ WITH tmp_source AS (
 DROP TABLE IF EXISTS sandbox_analytics_us.tmp_feature_audit_feature_event_payment;
 CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_event_payment DISTKEY(entity_id) AS (
     SELECT
-         event_info_event_time AS event_time  --## event_time ##
+         event_info_event_time::BIGINT AS event_time  --## event_time ##
          , key_consumer_consumer_uuid AS consumer_uuid --## consumer_uuid ##
          , consumer_uuid AS entity_id    --## entity_id ##
          , amount_amount AS amount
@@ -69,14 +69,10 @@ CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_simulated_payment DI
 SELECT
        par_process_date
        , COUNT(1) AS records_cnt
-       , 1.0 * COUNT(CASE WHEN sp_c_manual_pymt_attmpt_amt_h48_0 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_manual_pymt_attmpt_amt_h48_0
-       , 1.0 * COUNT(CASE WHEN sp_c_manual_pymt_attmpt_amt_h48_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_manual_pymt_attmpt_amt_h48_0
-           , 1.0 * COUNT(CASE WHEN sp_c_manual_pymt_attmpt_amt_h168_0 = '' THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_missing_sp_c_manual_pymt_attmpt_amt_h168_0
-       , 1.0 * COUNT(CASE WHEN sp_c_manual_pymt_attmpt_amt_h168_0 in ('-999', '-999.0', '0.0', '0') THEN 1 END) /
-       NULLIF(COUNT(1),0) AS pct_default_sp_c_manual_pymt_attmpt_amt_h168_0
+       , 1.0 * COUNT(CASE WHEN sp_c_manual_pymt_attmpt_amt_h48_0 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_manual_pymt_attmpt_amt_h48_0
+           , 1.0 * COUNT(CASE WHEN sp_c_manual_pymt_attmpt_amt_h168_0 NOT IN ('', '-999', '-999.0', '0.0', '0') THEN 1 END) /
+       NULLIF(COUNT(1),0) AS pct_value_sp_c_manual_pymt_attmpt_amt_h168_0
            FROM sandbox_analytics_us.tmp_feature_audit_feature_value_payment
 group by 1
 order by 1
@@ -86,17 +82,17 @@ order by 1
 SELECT
     t1.par_process_date
 , COUNT(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h48_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_manual_pymt_attmpt_amt_h48_0
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h48_0,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h48_0,'')::DECIMAL(18,2) - t2.sp_c_manual_pymt_attmpt_amt_h48_0::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h48_0,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_manual_pymt_attmpt_amt_h48_0
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h48_0,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h48_0,'')::DECIMAL(18,2) - t2.sp_c_manual_pymt_attmpt_amt_h48_0::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h48_0,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_manual_pymt_attmpt_amt_h48_0
 , COUNT(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h168_0,'')::DECIMAL(18,2) > 0 THEN 1 END) cnt_sp_c_manual_pymt_attmpt_amt_h168_0
-    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h168_0,'') > 0 AND
-                    ABS(NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h168_0,'')::DECIMAL(18,2) - t2.sp_c_manual_pymt_attmpt_amt_h168_0::DECIMAL(18,2)) < 1
-                              THEN 1 ELSE 0 END) / NULLIF(SUM(CASE
-                        WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h168_0,'') > 0
-                            THEN 1 ELSE 0 END), 0) pct_match_sp_c_manual_pymt_attmpt_amt_h168_0
+    , 1.0 * SUM(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h168_0,'')::DECIMAL(18,2) > 0
+                AND ABS(NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h168_0,'')::DECIMAL(18,2) - t2.sp_c_manual_pymt_attmpt_amt_h168_0::DECIMAL(18,2)) < 1
+                THEN 1 ELSE 0 END)
+                / NULLIF(SUM(CASE WHEN NULLIF(t1.sp_c_manual_pymt_attmpt_amt_h168_0,'')::DECIMAL(18,2) > 0
+                                THEN 1 ELSE 0 END), 0) pct_match_sp_c_manual_pymt_attmpt_amt_h168_0
 FROM sandbox_analytics_us.tmp_feature_audit_feature_value_payment t1
          INNER JOIN sandbox_analytics_us.tmp_feature_audit_feature_simulated_payment t2
                     ON t1.entity_id = t2.entity_id
