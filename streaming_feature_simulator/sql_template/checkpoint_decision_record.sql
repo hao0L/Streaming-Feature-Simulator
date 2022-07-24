@@ -1,5 +1,6 @@
 WITH tmp_source AS (
-    SELECT par_process_date
+    SELECT par_region
+         , par_process_date
          , key_created_at::BIGINT AS checkpoint_time
          , key_consumer_id
          , key_order_token
@@ -7,6 +8,7 @@ WITH tmp_source AS (
          , key_device_fingerprint_hash
          , consumer_email
          , request
+         , key_is_rejected
          , (CASE
                     WHEN NOT is_valid_json(rules_variables)
                         THEN rtrim(regexp_substr(rules_variables, '^.*[,]'),',') || '}'

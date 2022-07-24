@@ -3,7 +3,8 @@ DROP TABLE IF EXISTS sandbox_analytics_us.tmp_feature_audit_feature_value_{{TABL
 CREATE TABLE sandbox_analytics_us.tmp_feature_audit_feature_value_{{TABLE_POSTFIX}} DISTKEY(entity_id) AS (
 {% include CHECKPOINT_TABLE %}
     SELECT
-           par_process_date
+            par_region
+           , par_process_date
            , checkpoint_time
            , {{CONSUMER_UUID_COLUMN}} AS consumer_uuid
            , {{ENTITY_ID_FROM_REQUEST}} AS entity_id
