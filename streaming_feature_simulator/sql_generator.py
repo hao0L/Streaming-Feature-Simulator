@@ -16,5 +16,6 @@ def sql_generator(json_file_path, save_sql=True, save_path="./output/result.sql"
     if save_sql:
         with open(save_path, 'w') as f:
             f.write(sql)
+            print('sql script is saved successfully.')
 
     return sql

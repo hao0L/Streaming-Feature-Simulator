@@ -1,0 +1,111 @@
+{
+	"//prompt1//": "choose feature_audit or feature_simulation:",
+	"audit_or_simulation": "feature_audit" ,
+
+	"//prompt2.1//": "please create or confirm the source template for checkpoint call you'd like to simulate feature for (use decision record table by default):",
+	"checkpoint_table" : "checkpoint_decision_record.sql",
+
+	"//prompt2.2//": "please create or confirm the source template to pull the raw events for simulating features:",
+	"event_table" : "event_payment_processed.sql",
+
+	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
+	"region": "US",
+	"checkpoint": "CHECKOUT_CONFIRM",
+	"start_date": "2022-05-20",
+	"end_date": "2022-05-22",
+
+	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
+	"entity_id_from_request": "key_consumer_id",
+	"consumer_uuid_column": "key_consumer_id",
+
+
+	"//prompt3.3//": "please input columns to extract information from event table:",
+	"entity_id_column": "consumer_uuid",
+	"event_time_key": "key_event_info_event_time",
+
+
+	"//prompt4.1//": "please choose the method for feature value aggregation: sliding_window or latest:",
+	"feature_type": "sliding_window",
+
+	"//prompt4.2//": "please input the time windows for feature value aggregation: only m,h,d is now supported",
+	"windows": [
+		"h1",
+		"h6",
+		"h12",
+		"h24",
+		"h48",
+		"h72",
+		"h168"
+	],
+
+	"//prompt5//": "please put in all columns that will be aggregated based on key selected above: (count, count_distinct, sum, min, max)",
+	"feature_columns": [
+		{
+			"column": "key_payment_id",
+			"column_alias": "",
+			"data_type": "Varchar",
+			"aggfunc": "count",
+			"filter": "payment_method_ach_bank_account_fingerprint = 'None' or payment_status != 'SUCCESS'",
+			"prefix": "sp_c_pymt_attmpt_cnt_incl_ach"
+		},
+		{
+			"column": "amount_amount",
+			"column_alias": "",
+			"data_type": "DECIMAL(18,2)",
+			"aggfunc": "sum",
+			"filter": "payment_method_ach_bank_account_fingerprint = 'None' or payment_status != 'SUCCESS'",
+			"prefix": "sp_c_pymt_attmpt_amt_incl_ach"
+		},
+		{
+			"column": "key_payment_id",
+			"column_alias": "",
+			"data_type": "Varchar",
+			"aggfunc": "count",
+			"filter": "(payment_method_ach_bank_account_fingerprint = 'None' or payment_status != 'SUCCESS') AND LOWER(payment_source) IN ('consumer_portal', 'mobile_api')",
+			"prefix": "sp_c_manual_pymt_attmpt_cnt_incl_ach"
+		},
+		{
+			"column": "amount_amount",
+			"column_alias": "",
+			"data_type": "DECIMAL(18,2)",
+			"aggfunc": "sum",
+			"filter": "(payment_method_ach_bank_account_fingerprint = 'None' or payment_status != 'SUCCESS') AND LOWER(payment_source) IN ('consumer_portal', 'mobile_api')",
+			"prefix": "sp_c_manual_pymt_attmpt_amt_incl_ach"
+		},
+		{
+			"column": "COALESCE(NULLIF(payment_method_credit_card_card_id, 'None'), NULLIF(payment_method_ach_bank_account_fingerprint, 'None'))",
+			"column_alias": "payment_method_id",
+			"data_type": "Varchar",
+			"aggfunc": "count_distinct",
+			"filter": "",
+			"prefix": "sp_c_attempt_pymt_method_distinct_cnt_incl_ach"
+		},
+		{
+			"column": "COALESCE(NULLIF(payment_method_credit_card_card_id, 'None'), NULLIF(payment_method_ach_bank_account_fingerprint, 'None'))",
+			"column_alias": "payment_method_id",
+			"data_type": "VARCHAR",
+			"aggfunc": "count_distinct",
+			"filter": "payment_status = 'SUCCESSFUL'",
+			"prefix": "sp_c_success_pymt_method_distinct_cnt_incl_ach"
+		}
+	],
+
+	"//prompt6//": "please put in columns are used as filters:",
+	"filter_columns": [
+		{
+			"column": "payment_method_ach_bank_account_fingerprint"
+		},
+		{
+			"column": "payment_status"
+		},
+		{
+			"column": "payment_source"
+		}
+	],
+
+	"//prompt7//": "please put in table postfix you'd like to use for auditing/simulation:",
+	"table_postfix": "payment_ach",
+
+	"//prompt8//": "please put in streaming feature name template:",
+	"feature_name_template": "${feature_prefix}_${window}_0"
+}

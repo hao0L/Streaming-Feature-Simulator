@@ -6,22 +6,22 @@
 	"checkpoint_table" : "checkpoint_decision_record.sql",
 
 	"//prompt2.2//": "please create or confirm the source template to pull the raw events for simulating features:",
-	"event_table" : "event_order_red.sql",
+	"event_table" : "event_decision_record_smarty_street.sql",
 
 	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
-	"region": "GB",
-	"checkpoint": "CPE_CHECKOUT_CONFIRM",
-	"start_date": "2022-05-20",
-	"end_date": "2022-05-22",
+	"region": "US",
+	"checkpoint": "CHECKOUT_CONFIRM",
+	"start_date": "2022-05-14",
+	"end_date": "2022-05-16",
 
 	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
-	"entity_id_from_request": "key_consumer_id",
+	"entity_id_from_request": "JSON_EXTRACT_PATH_TEXT(feature_map, 'SMARTY_STREET_SHIPPING_ADDRESS_VERIFICATION',TRUE)",
 	"consumer_uuid_column": "key_consumer_id",
 
 
 	"//prompt3.3//": "please input columns to extract information from event table:",
-	"entity_id_column": "consumer_uuid",
-	"event_time_key": "event_time",
+	"entity_id_column": "MD5(LOWER(TRIM(order_detail_shipping_address_address1)||' '||TRIM(order_detail_shipping_address_address2)||' '||TRIM(order_detail_shipping_address_suburb)||' '||TRIM(order_detail_shipping_address_state)||' '||TRIM(order_detail_shipping_address_postcode)||' '||TRIM(order_detail_shipping_address_country_code)))",
+	"event_time_key": "key_event_info_event_time",
 
 
 	"//prompt4.1//": "please choose the method for feature value aggregation: sliding_window or latest:",
@@ -29,49 +29,51 @@
 
 	"//prompt4.2//": "please input the time windows for feature value aggregation: only m,h,d is now supported",
 	"windows": [
+		"h1",
+		"h2",
+		"h6",
 		"h12",
-		"h24",
-		"d3",
-		"d7"
+		"d1",
+		"d3"
 	],
 
 	"//prompt5//": "please put in all columns that will be aggregated based on key selected above: (count, count_distinct, sum, min, max)",
 	"feature_columns": [
 		{
-			"column": "payment_card_name",
+			"column": "consumer_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count_distinct",
-			"filter": "LEN(payment_card_name)>0",
-			"prefix": "sp_c_attmpt_cc_name_cnt"
+			"filter": "",
+			"prefix": "sp_address_linking_total_consumer_cnt_by_normalized_shipping_hash"
 		},
 		{
-			"column": "order_transaction_id",
+			"column": "consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
-			"aggfunc": "count",
-			"filter": "status_reason = 'INVALID_PAYMENT_DETAILS'",
-			"prefix": "sp_c_online_decl_topaz_invalid_pymnt_ordr_cnt"
+			"aggfunc": "cnt",
+			"filter": "is_rejected = 'false'",
+			"prefix": "sp_address_linking_total_success_order_cnt_by_normalized_shipping_hash"
 		},
 		{
-			"column": "order_transaction_id",
+			"column": "merchant_order_amount",
 			"column_alias": "",
-			"data_type": "varchar",
-			"aggfunc": "count",
-			"filter": "status_reason = 'INSUFFICIENT_FUNDS'",
-			"prefix": "sp_c_online_decl_topaz_insffcnt_fund_ordr_cnt"
+			"data_type": "decimal(18.2)",
+			"aggfunc": "sum",
+			"filter": "is_rejected = 'false'",
+			"prefix": "sp_address_linking_total_success_order_amt_by_normalized_shipping_hash"
 		}
 	],
 
 	"//prompt6//": "please put in columns are used as filters:",
 	"filter_columns": [
 		{
-			"column": "status_reason"
+			"column": "is_rejected"
 		}
 	],
 
 	"//prompt7//": "please put in table postfix you'd like to use for auditing/simulation:",
-	"table_postfix": "order_attempt",
+	"table_postfix": "norm_address",
 
 	"//prompt8//": "please put in streaming feature name template:",
 	"feature_name_template": "${feature_prefix}_${window}_0"
