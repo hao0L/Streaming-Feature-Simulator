@@ -145,8 +145,7 @@ class SlidingWindowFeatureGroup(BaseFeatureGroup):
                 feature_sql_expressions.append(feature_sql_expr)
                 feature_names.append(Template(self.feature_name_template).substitute(feature_prefix=feature_prefix, window=window))
 
-                max_window = max(
-                    [re.match("([d])([\d]+)", window).groups()[1] if re.match("([d])([\d]+)", window) else 0])
+            max_window = max([int(re.match("([d])([\d]+)", window).groups()[1]) if re.match("([d])([\d]+)", window) else 0 for window in self.windows])
 
             # the other column names used in feature values and filters
             event_value_column = f"{feature_def['column']} AS {feature_def['column_alias']}" if feature_def[
