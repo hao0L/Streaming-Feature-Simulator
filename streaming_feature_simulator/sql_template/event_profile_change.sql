@@ -7,6 +7,6 @@
          {% endfor -%}
 --- always use event table as the main table
     FROM red.raw_c_e_consumer_profile_change
-    WHERE par_region = '{{REGION}}'
+    WHERE par_region in ({{REGION}})
       AND par_process_date BETWEEN '{{EVENT_START_DATE}}' AND '{{END_DATE}}'
     ORDER BY entity_id
