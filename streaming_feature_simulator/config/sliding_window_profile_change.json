@@ -1,18 +1,18 @@
 {
 	"//prompt1//": "choose feature_audit or feature_simulation:",
-	"audit_or_simulation": "feature_audit" ,
+	"audit_or_simulation": "feature_simulation" ,
 
 	"//prompt2.1//": "please create or confirm the source template for checkpoint call you'd like to simulate feature for (use decision record table by default):",
 	"checkpoint_table" : "checkpoint_decision_record.sql",
 
 	"//prompt2.2//": "please create or confirm the source template to pull the raw events for simulating features:",
-	"event_table" : "event_payment_fraud.sql",
+	"event_table" : "event_profile_change.sql",
 
 	"//prompt3.1//": "please input the basic parameter for the feature you'd like to simulate:",
-	"region": "AU",
+	"region": "'US' , 'AU', 'GB'",
 	"checkpoint": "CHECKOUT_CONFIRM",
-	"start_date": "2022-07-22",
-	"end_date": "2022-07-25",
+	"start_date": "2022-07-01",
+	"end_date": "2022-07-01",
 
 	"//prompt3.2//": "please input the sql expression to extract entity key from checkpoint tables:",
 	"entity_id_from_request": "key_consumer_id",
@@ -20,7 +20,7 @@
 
 
 	"//prompt3.3//": "please input columns to extract information from event table:",
-	"entity_id_column": "key_consumer_uuid",
+	"entity_id_column": "consumer_consumer_uuid",
 	"event_time_key": "event_time",
 
 
@@ -32,101 +32,73 @@
 		"m30",
 		"h1",
 		"h6",
-		"h12",
-		"h24",
-		"h48",
-		"h72",
+		"d1",
+		"d2",
+		"d3",
 		"d7"
 	],
 
 	"//prompt5//": "please put in all columns from event table that will be aggregated based on key selected above: (count, count_distinct, sum, min, max)",
 	"feature_columns": [
 		{
-			"column": "key_consumer_uuid",
+			"column": "consumer_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
-			"filter": "issuer_decline_code = 21",
-			"prefix": "sp_c_acct_decl_topaz_invalid_pymnt_pymt_cnt"
+			"filter": "",
+			"prefix": "sp_c_profile_action_cnt_all"
 		},
 		{
-			"column": "key_consumer_uuid",
+			"column": "consumer_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
-			"filter": "issuer_decline_code = 41",
-			"prefix": "sp_c_acct_decl_topaz_insffcnt_fund_pymt_cnt"
+			"filter": "event_type = 'ADD_CARD'",
+			"prefix": "sp_c_profile_action_cnt_add_card"
 		},
 		{
-			"column": "key_consumer_uuid",
+			"column": "consumer_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
-			"filter": "issuer_decline_code = 4",
-			"prefix": "sp_c_acct_decl_topaz_fraud_breach_pymt_cnt"
+			"filter": "event_type = 'DELETE_CARD'",
+			"prefix": "sp_c_profile_action_cnt_delete_card"
 		},
 		{
-			"column": "key_consumer_uuid",
+			"column": "consumer_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
-			"filter": "issuer_decline_code not in (21, 41, 4)",
-			"prefix": "sp_c_acct_decl_topaz_fraud_other_decl_pymt_cnt"
+			"filter": "event_type = 'UPDATE_ADDRESS'",
+			"prefix": "sp_c_profile_action_cnt_update_address"
 		},
 		{
-			"column": "key_consumer_uuid",
+			"column": "consumer_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
-			"filter": "internal_status_code = 'INVALID_CREDIT_CARD_NUMBER'",
-			"prefix": "sp_c_acct_decl_topaz_invalid_cc_num_pymt_cnt"
+			"filter": "event_type = 'UPDATE_PHONE'",
+			"prefix": "sp_c_profile_action_cnt_update_phone"
 		},
 		{
-			"column": "key_consumer_uuid",
+			"column": "consumer_consumer_uuid",
 			"column_alias": "",
 			"data_type": "varchar",
 			"aggfunc": "count",
-			"filter": "internal_status_code = 'INVALID_CREDIT_CARD_EXPIRY_DATE'",
-			"prefix": "sp_c_acct_decl_topaz_invalid_expire_dt_pymt_cnt"
-		},
-		{
-			"column": "key_consumer_uuid",
-			"column_alias": "",
-			"data_type": "varchar",
-			"aggfunc": "count",
-			"filter": "internal_status_code = 'INVALID_CREDIT_CARD_CVV'",
-			"prefix": "sp_c_acct_decl_topaz_invalid_cvv_pymt_cnt"
-		},
-		{
-			"column": "key_consumer_uuid",
-			"column_alias": "",
-			"data_type": "varchar",
-			"aggfunc": "count",
-			"filter": "internal_status_code = 'CARD_EXPIRED'",
-			"prefix": "sp_c_acct_decl_topaz_card_expired_cnt"
-		},
-		{
-			"column": "key_consumer_uuid",
-			"column_alias": "",
-			"data_type": "varchar",
-			"aggfunc": "count",
-			"filter": "internal_status_code = 'CREDIT_CARD_DECLINED'",
-			"prefix": "sp_c_acct_decl_topaz_credit_card_declined_cnt"
+			"filter": "event_type = 'UPDATE_EMAIL'",
+			"prefix": "sp_c_profile_action_cnt_update_email"
 		}
 	],
 
 	"//prompt6//": "please put in columns are used as filters:",
 	"filter_columns": [
 		{
-			"column": "issuer_decline_code"
-		},
-		{
-			"column": "internal_status_code"
+			"column": "event_type"
 		}
 	],
 
 	"//prompt7//": "please put in table postfix you'd like to use for auditing/simulation:",
-	"table_postfix": "payment_fraud",
+	"table_postfix": "profile_change",
 
 	"//prompt8//": "please put in streaming feature name template:",
 	"feature_name_template": "${feature_prefix}_${window}"

@@ -14,7 +14,7 @@ WITH tmp_source AS (
                         THEN rtrim(regexp_substr(rules_variables, '^.*[,]'),',') || '}'
                     ELSE rules_variables END) AS feature_map
     FROM red.raw_c_e_fc_decision_record
-    WHERE par_region = '{{REGION}}'
+    WHERE par_region in ({{REGION}})
       AND par_process_date BETWEEN '{{START_DATE}}' AND '{{END_DATE}}'
       AND key_checkpoint = '{{CHECKPOINT}}'
 )
